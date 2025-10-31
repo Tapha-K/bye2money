@@ -1,6 +1,7 @@
 import CircleButton from "@/components/CircleButton";
+import { Link } from "react-router-dom";
 
-const Header = ({ currentDate, setCurrentDate, viewMode, setViewMode }) => {
+const Header = ({ currentDate, setCurrentDate, viewMode }) => {
     // --- 날짜 변경 ---
     const handlePrevMonth = () => {
         setCurrentDate(
@@ -45,27 +46,30 @@ const Header = ({ currentDate, setCurrentDate, viewMode, setViewMode }) => {
 
                 {/* 3. 보기 모드 토글 버튼 */}
                 <div className="w-[160px] flex gap-[12px] pl-[20px] mr-[20px]">
-                    <CircleButton
-                        isActive={viewMode === "list"}
-                        onClick={() => setViewMode("list")}
-                        imageUrl={"/images/listLogo.png"}
-                        activeColor="rgba(255,255,255,1)"
-                        inactiveColor="rgba(0,0,0,0)"
-                    />
-                    <CircleButton
-                        isActive={viewMode === "calendar"}
-                        onClick={() => setViewMode("calendar")}
-                        imageUrl={"/images/calendarLogo.png"}
-                        activeColor="rgba(255,255,255,1)"
-                        inactiveColor="rgba(0,0,0,0)"
-                    />
-                    <CircleButton
-                        isActive={viewMode === "stats"}
-                        onClick={() => setViewMode("stats")}
-                        imageUrl={"/images/statsLogo.png"}
-                        activeColor="rgba(255,255,255,1)"
-                        inactiveColor="rgba(0,0,0,0)"
-                    />
+                    <Link to="/">
+                        <CircleButton
+                            isActive={viewMode === "list"}
+                            imageUrl={"/images/listLogo.png"}
+                            activeColor="rgba(255,255,255,1)"
+                            inactiveColor="rgba(0,0,0,0)"
+                        />
+                    </Link>
+                    <Link to="/calendar">
+                        <CircleButton
+                            isActive={viewMode === "calendar"}
+                            imageUrl={"/images/calendarLogo.png"}
+                            activeColor="rgba(255,255,255,1)"
+                            inactiveColor="rgba(0,0,0,0)"
+                        />
+                    </Link>
+                    <Link to="/stats">
+                        <CircleButton
+                            isActive={viewMode === "stats"}
+                            imageUrl={"/images/statsLogo.png"}
+                            activeColor="rgba(255,255,255,1)"
+                            inactiveColor="rgba(0,0,0,0)"
+                        />
+                    </Link>
                 </div>
             </div>
         </header>
