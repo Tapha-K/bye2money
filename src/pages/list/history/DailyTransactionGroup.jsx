@@ -1,14 +1,20 @@
+import { useMemo } from "react";
 import TransactionItem from "./TransactionItem";
 
 const DailyTransactionGroup = ({ date, transactions, onEdit, onDelete }) => {
-    const dailyIncome = transactions.reduce(
-        (sum, tx) => (tx.amount > 0 ? sum + tx.amount : sum),
-        0
-    );
-    const dailyExpense = transactions.reduce(
-        (sum, tx) => (tx.amount < 0 ? sum + tx.amount : sum),
-        0
-    );
+    const dailyIncome = useMemo(() => {
+        return transactions.reduce(
+            (sum, tx) => (tx.amount > 0 ? sum + tx.amount : sum),
+            0
+        );
+    }, [transactions]);
+
+    const dailyExpense = useMemo(() => {
+        return transactions.reduce(
+            (sum, tx) => (tx.amount < 0 ? sum + tx.amount : sum),
+            0
+        );
+    }, [transactions]);
 
     return (
         <div className="my-14">

@@ -3,7 +3,7 @@
     [x] App.jsx 간소화
     [x] react router, layout file 활용하여 페이징
     [x] classnames module을 활용해서 스타일 제어, 상수 관리하는 파일 만들어서 간소화
-    [ ] react Hook api (useMemo, useReducer, useCallback) 찾아보고 적용
+    [x] react Hook api (useMemo, useReducer, useCallback) 찾아보고 적용
     [ ] SectionForm에 store로 쓸만한 library 찾아서 도입
     [ ] Typescript로 변경 후 인터페이스 정의
 

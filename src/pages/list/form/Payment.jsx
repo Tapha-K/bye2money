@@ -1,41 +1,34 @@
-import { useState, useRef, useEffect } from "react";
-
-const ChevronDownIcon = () => (
-    <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth={1.5}
-        stroke="currentColor"
-        className="w-4 h-4 text-gray-500"
-    >
-        <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="m19.5 8.25-7.5 7.5-7.5-7.5"
-        />
-    </svg>
-);
+import { useState, useRef, useEffect, useCallback } from "react";
+import ChevronDownIcon from "@/components/ChevronDownIcon";
 
 const Payment = ({ options, selectedOption, onSelect, onDelete, onAdd }) => {
     const [isOpen, setIsOpen] = useState(false);
     // 드롭다운 DOM 요소를 가리킬 ref
     const dropdownRef = useRef(null);
 
-    const handleSelect = (option) => {
-        onSelect(option);
-        setIsOpen(false);
-    };
+    const handleSelect = useCallback(
+        (option) => {
+            onSelect(option);
+            setIsOpen(false);
+        },
+        [onSelect]
+    );
 
-    const handleDeleteClick = (event, option) => {
-        event.stopPropagation();
-        onDelete(option);
-    };
+    const handleDeleteClick = useCallback(
+        (event, option) => {
+            event.stopPropagation();
+            onDelete(option);
+        },
+        [onDelete]
+    );
 
-    const handleAddClick = (event) => {
-        event.stopPropagation();
-        onAdd();
-    };
+    const handleAddClick = useCallback(
+        (event) => {
+            event.stopPropagation();
+            onAdd();
+        },
+        [onAdd]
+    );
 
     useEffect(() => {
         const handleClickOutside = (event) => {

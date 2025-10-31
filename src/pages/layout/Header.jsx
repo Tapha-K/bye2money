@@ -1,18 +1,20 @@
 import CircleButton from "@/components/CircleButton";
+import { useCallback } from "react";
 import { Link } from "react-router-dom";
 
 const Header = ({ currentDate, setCurrentDate, viewMode }) => {
     // --- 날짜 변경 ---
-    const handlePrevMonth = () => {
+    const handlePrevMonth = useCallback(() => {
         setCurrentDate(
             new Date(currentDate.setMonth(currentDate.getMonth() - 1))
         );
-    };
-    const handleNextMonth = () => {
+    }, [currentDate, setCurrentDate]);
+
+    const handleNextMonth = useCallback(() => {
         setCurrentDate(
             new Date(currentDate.setMonth(currentDate.getMonth() + 1))
         );
-    };
+    }, [currentDate, setCurrentDate]);
 
     return (
         <header className="flex items-center h-[200px] bg-[#9f9f9f]">

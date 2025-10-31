@@ -1,11 +1,14 @@
+import { useCallback } from "react";
 import Amount from "@/components/Amount";
 
 const TransactionItem = ({ transaction, onEdit, onDelete }) => {
-    const handleDeleteClick = (event) => {
-        // 클릭 이벤트가 부모 div의 onEdit으로 전파되는 것을 막음
-        event.stopPropagation();
-        onDelete(transaction);
-    };
+    const handleDeleteClick = useCallback(
+        (event) => {
+            event.stopPropagation();
+            onDelete(transaction);
+        },
+        [onDelete, transaction]
+    );
 
     return (
         <div
