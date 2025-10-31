@@ -3,7 +3,7 @@ import SectionForm from "./form/SectionForm";
 import TransactionList from "./history/TransactionList";
 import ActionModal from "@/components/ActionModal";
 import Amount from "@/components/Amount";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 
 const ListPage = () => {
     // State for saving current transcation data
@@ -11,7 +11,10 @@ const ListPage = () => {
     // State for saving edited transaction data (if null, 'input mode')
     const [editingTransaction, setEditingTransaction] = useState(null);
     // State for filtering expense/income ('all', 'income', 'expense')
-    const [filter, setFilter] = useState("all");
+    const [filter, setFilter] = useState({
+        imcome: true,
+        expense: true,
+    });
     // State for delete modal
     const [deleteModalState, setDeleteModalState] = useState({
         isOpen: false,
@@ -62,14 +65,12 @@ const ListPage = () => {
         closeDeleteConfirmationModal();
     };
 
-    const filteredTransactions = useMemo(() => {
-        if (filter === "all") return transactions;
-        if (filter === "income")
-            return transactions.filter((tx) => tx.amount > 0);
-        if (filter === "expense")
-            return transactions.filter((tx) => tx.amount < 0);
-        return transactions;
-    }, [transactions, filter]);
+    const handleFilterChange = (filterType) => {
+        setFilter((prevFilter) => ({
+            ...prevFilter,
+            [filterType]: !prevFilter[filterType], // 해당 키의 boolean 값을 토글
+        }));
+    };
 
     useEffect(() => {
         fetch("/mockData.json")
@@ -97,11 +98,11 @@ const ListPage = () => {
                 />
             </div>
             <TransactionList
-                transactions={filteredTransactions}
+                transactions={transactions}
                 onEdit={handleEdit}
                 onDelete={openDeleteConfirmationModal}
                 filter={filter}
-                onFilterChange={setFilter}
+                onFilterChange={handleFilterChange}
             />
             {deleteModalState.isOpen && (
                 <ActionModal

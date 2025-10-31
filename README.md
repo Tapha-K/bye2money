@@ -9,6 +9,7 @@
 
 -   셀프 보완 사항
     [x] 항목을 눌렀을 때 결제수단이 form으로 제대로 올라가지 않는 문제 수정
+    [x] 총수입, 총수출 필터링 개선
     [ ] Header의 날짜 변경 시 월별 영어 표시 및 history filtering
     [ ] 카테고리 별 배경색을 다르게 하기
     [ ] Actionmodal을 context API로 공유

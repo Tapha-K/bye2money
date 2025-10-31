@@ -13,15 +13,14 @@ const MonthlySummary = ({ transactions, filter, onFilterChange }) => {
 
     return (
         <div className="flex justify-between items-center bg-white text-xl">
-            <button onClick={() => onFilterChange("all")}>
-                전체 내역 {totalCount}건
-            </button>
+            <span>전체 내역 {totalCount}건</span>
+
             <div className="flex items-center">
                 <div className="flex items-center space-x-2 w-[160px] justify-end">
                     <span>총수입 {totalIncome.toLocaleString()}원</span>
                     <CircleButton
                         size="s"
-                        isActive={filter === "income"}
+                        isActive={filter.income}
                         onClick={() => onFilterChange("income")}
                         imageUrl={"/images/checkLogo.png"}
                         activeColor="rgba(0,0,0,1)"
@@ -34,7 +33,7 @@ const MonthlySummary = ({ transactions, filter, onFilterChange }) => {
                     </span>
                     <CircleButton
                         size="s"
-                        isActive={filter === "expense"}
+                        isActive={filter.expense}
                         onClick={() => onFilterChange("expense")}
                         imageUrl={"/images/checkLogo.png"}
                         activeColor="rgba(0,0,0,1)"
