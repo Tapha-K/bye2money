@@ -33,6 +33,8 @@ const SectionForm = ({ onSave, editingTransaction }) => {
     const [paymentMethods, setPaymentMethods] = useState([
         { id: 1, name: "현금" },
         { id: 2, name: "신용카드" },
+        { id: 3, name: "체크카드" },
+        { id: 4, name: "네이버페이" },
     ]);
     const [selectedMethod, setSelectedMethod] = useState(() => {
         // ✅ 초기값 함수 사용
