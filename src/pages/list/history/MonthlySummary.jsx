@@ -23,8 +23,8 @@ const MonthlySummary = ({ transactions, filter, onFilterChange }) => {
                         isActive={filter.income}
                         onClick={() => onFilterChange("income")}
                         imageUrl={"/images/checkLogo.png"}
-                        activeColor="rgba(0,0,0,1)"
-                        inactiveColor="rgba(140,140,140,0.6)"
+                        activeClass="bg-black"
+                        inactiveClass="bg-gray-400"
                     />
                 </div>
                 <div className="flex items-center space-x-2 w-[160px] justify-end">
@@ -36,8 +36,8 @@ const MonthlySummary = ({ transactions, filter, onFilterChange }) => {
                         isActive={filter.expense}
                         onClick={() => onFilterChange("expense")}
                         imageUrl={"/images/checkLogo.png"}
-                        activeColor="rgba(0,0,0,1)"
-                        inactiveColor="rgba(140,140,140,0.6)"
+                        activeClass="bg-black"
+                        inactiveClass="bg-gray-400"
                     />
                 </div>
             </div>

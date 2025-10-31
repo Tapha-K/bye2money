@@ -50,24 +50,24 @@ const Header = ({ currentDate, setCurrentDate, viewMode }) => {
                         <CircleButton
                             isActive={viewMode === "list"}
                             imageUrl={"/images/listLogo.png"}
-                            activeColor="rgba(255,255,255,1)"
-                            inactiveColor="rgba(0,0,0,0)"
+                            activeClass="bg-white"
+                            inactiveClass="bg-transparent"
                         />
                     </Link>
                     <Link to="/calendar">
                         <CircleButton
                             isActive={viewMode === "calendar"}
                             imageUrl={"/images/calendarLogo.png"}
-                            activeColor="rgba(255,255,255,1)"
-                            inactiveColor="rgba(0,0,0,0)"
+                            activeClass="bg-white"
+                            inactiveClass="bg-transparent"
                         />
                     </Link>
                     <Link to="/stats">
                         <CircleButton
                             isActive={viewMode === "stats"}
                             imageUrl={"/images/statsLogo.png"}
-                            activeColor="rgba(255,255,255,1)"
-                            inactiveColor="rgba(0,0,0,0)"
+                            activeClass="bg-white"
+                            inactiveClass="bg-transparent"
                         />
                     </Link>
                 </div>

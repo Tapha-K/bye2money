@@ -6,6 +6,11 @@ import Payment from "./Payment";
 import ActionModal from "@/components/ActionModal";
 import Category from "./Category";
 import CircleButton from "@/components/CircleButton";
+import {
+    INITIAL_PAYMENT_METHODS,
+    CATEGORY_EXPENSES,
+    CATEGORY_INCOMES,
+} from "@/assets/constants";
 import { useState } from "react";
 
 const SectionForm = ({ onSave, editingTransaction }) => {
@@ -30,12 +35,9 @@ const SectionForm = ({ onSave, editingTransaction }) => {
         editingTransaction ? editingTransaction.content : ""
     );
     // For Payment method
-    const [paymentMethods, setPaymentMethods] = useState([
-        { id: 1, name: "현금" },
-        { id: 2, name: "신용카드" },
-        { id: 3, name: "체크카드" },
-        { id: 4, name: "네이버페이" },
-    ]);
+    const [paymentMethods, setPaymentMethods] = useState(
+        INITIAL_PAYMENT_METHODS
+    );
     const [selectedMethod, setSelectedMethod] = useState(() => {
         // ✅ 초기값 함수 사용
         if (!editingTransaction) return null;
@@ -52,26 +54,14 @@ const SectionForm = ({ onSave, editingTransaction }) => {
         data: null,
     });
     const [newMethodName, setNewMethodName] = useState("");
-    // For Category
-    const categoryIncomes = [
-        { id: 1, name: "월급" },
-        { id: 2, name: "용돈" },
-        { id: 3, name: "기타 수입" },
-    ];
-    const categoryExpenses = [
-        { id: 1, name: "생활" },
-        { id: 2, name: "식비" },
-        { id: 3, name: "교통" },
-        { id: 4, name: "쇼핑/뷰티" },
-        { id: 5, name: "의료/건강" },
-        { id: 6, name: "문화/여가" },
-        { id: 7, name: "미분류" },
-    ];
+
     const [selectedCategory, setSelectedCategory] = useState(() => {
         // ✅ 초기값 함수 사용
         if (!editingTransaction) return null;
         const currentCategories =
-            editingTransaction.amount > 0 ? categoryIncomes : categoryExpenses;
+            editingTransaction.amount > 0
+                ? CATEGORY_INCOMES
+                : CATEGORY_EXPENSES;
         return (
             currentCategories.find(
                 (c) => c.name === editingTransaction.category
@@ -180,7 +170,7 @@ const SectionForm = ({ onSave, editingTransaction }) => {
                 </div>
                 <div className="flex items-center px-4 w-[160px] h-[60px]">
                     <Category
-                        options={isPlus ? categoryIncomes : categoryExpenses}
+                        options={isPlus ? CATEGORY_INCOMES : CATEGORY_EXPENSES}
                         selectedOption={selectedCategory}
                         onSelect={setSelectedCategory}
                     />
