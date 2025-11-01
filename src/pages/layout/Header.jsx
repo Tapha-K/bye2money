@@ -1,6 +1,7 @@
-import CircleButton from "@/components/CircleButton";
 import { useCallback } from "react";
 import { Link } from "react-router-dom";
+import { MONTH_NAMES } from "@/assets/constants";
+import CircleButton from "@/components/CircleButton";
 
 const Header = ({ currentDate, setCurrentDate, viewMode }) => {
     // --- 날짜 변경 ---
@@ -31,11 +32,12 @@ const Header = ({ currentDate, setCurrentDate, viewMode }) => {
                         &lt;
                     </button>
                     <div className="text-center">
-                        <p className="text-m">{currentDate.getFullYear()}</p>
-                        <p className="text-3xl">
-                            {currentDate.toLocaleString("default", {
-                                month: "long",
-                            })}
+                        <p className="text-m mb-3">
+                            {currentDate.getFullYear()}
+                        </p>
+                        <p className="text-3xl">{currentDate.getMonth() + 1}</p>
+                        <p className="text-m mt-3">
+                            {MONTH_NAMES[currentDate.getMonth()]}
                         </p>
                     </div>
                     <button

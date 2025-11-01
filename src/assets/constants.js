@@ -20,3 +20,18 @@ export const INITIAL_PAYMENT_METHODS = [
     { id: 3, name: "체크카드" },
     { id: 4, name: "네이버페이" },
 ];
+
+export const MONTH_NAMES = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+];
