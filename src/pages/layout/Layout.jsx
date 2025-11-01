@@ -1,6 +1,16 @@
-import { useState } from "react";
+import { useState, createContext, useContext } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import Header from "./Header";
+
+export const DateContext = createContext(null);
+
+export const useDate = () => {
+    const context = useContext(DateContext);
+    if (!context) {
+        throw new Error("Cannot use date context outside of a DateProvider");
+    }
+    return context;
+};
 
 const Layout = () => {
     const [currentDate, setCurrentDate] = useState(new Date());
@@ -13,7 +23,7 @@ const Layout = () => {
     };
 
     return (
-        <>
+        <DateContext.Provider value={{ currentDate, setCurrentDate }}>
             <Header
                 currentDate={currentDate}
                 setCurrentDate={setCurrentDate}
@@ -22,7 +32,7 @@ const Layout = () => {
             <main className="relative mx-auto">
                 <Outlet />
             </main>
-        </>
+        </DateContext.Provider>
     );
 };
 
