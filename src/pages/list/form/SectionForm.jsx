@@ -12,8 +12,15 @@ import {
     CATEGORY_INCOMES,
 } from "@/assets/constants";
 import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { addTransaction, updateTransaction } from "@/store/transactionsSlice";
 
-const SectionForm = ({ onSave, editingTransaction }) => {
+const SectionForm = () => {
+    const editingTransaction = useSelector(
+        (state) => state.transactions.editingTransaction
+    );
+    const dispatch = useDispatch();
+
     // For InputDate
     const [date, setDate] = useState(() =>
         editingTransaction
@@ -117,7 +124,18 @@ const SectionForm = ({ onSave, editingTransaction }) => {
             category: selectedCategory.name,
         };
 
-        onSave(transactionData);
+        if (editingTransaction) {
+            // updateTransaction Action에 '수정된 데이터'를 실어 보냄
+            dispatch(
+                updateTransaction({
+                    ...transactionData,
+                    id: editingTransaction.id,
+                })
+            );
+        } else {
+            // addTransaction Action에 '새 데이터'를 실어 보냄
+            dispatch(addTransaction({ ...transactionData, id: Date.now() }));
+        }
 
         // 저장 후 폼 초기화 (editingTranstaction이 null일 때의 초기값과 동일하게)
         if (!editingTransaction) {
@@ -178,8 +196,8 @@ const SectionForm = ({ onSave, editingTransaction }) => {
                 <div className="flex items-center pl-4 w-auto h-[60px]">
                     <CircleButton
                         isActive={isFormValid} // 유효성 검사 결과에 따라 활성화 상태 전달
-                        activeColor="rgba(0,0,0,1)"
-                        inactiveColor="rgba(140,140,140,1)"
+                        activeClass="bg-black"
+                        inactiveClass="bg-gray-400"
                         imageUrl={"/images/checkLogo.png"}
                         onClick={handleSubmit}
                     />

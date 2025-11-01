@@ -4,106 +4,46 @@ import TransactionList from "./history/TransactionList";
 import ActionModal from "@/components/ActionModal";
 import Amount from "@/components/Amount";
 import { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import {
+    fetchTransactions,
+    deleteTransaction,
+} from "@/store/transactionsSlice";
 
 const ListPage = () => {
-    // State for saving current transcation data
-    const [transactions, setTransactions] = useState([]);
-    // State for saving edited transaction data (if null, 'input mode')
-    const [editingTransaction, setEditingTransaction] = useState(null);
-    // State for filtering expense/income ('all', 'income', 'expense')
-    const [filter, setFilter] = useState({
-        imcome: true,
-        expense: true,
-    });
-    // State for delete modal
     const [deleteModalState, setDeleteModalState] = useState({
         isOpen: false,
-        data: null,
+        data: null, // data가 삭제할 transaction 객체
     });
 
-    const handleSaveTransaction = (newTransactionData) => {
-        if (editingTransaction) {
-            // 수정 모드: 기존 id를 사용하여 배열에서 해당 항목을 업데이트
-            setTransactions(
-                transactions.map((tx) =>
-                    tx.id === editingTransaction.id
-                        ? { ...tx, ...newTransactionData, id: tx.id }
-                        : tx
-                )
-            );
-        } else {
-            // 입력 모드: 새 id를 부여하여 배열에 추가
-            const newTx = { ...newTransactionData, id: Date.now() };
-            setTransactions([...transactions, newTx]);
-            console.log("Added Transaction:", newTx);
-        }
-        setEditingTransaction(null); // 폼을 '입력 모드'로 초기화
-    };
+    const dispatch = useDispatch();
 
-    const handleEdit = (transactionToEdit) => {
-        setEditingTransaction(transactionToEdit);
-    };
-
-    // 내역 삭제 관련 함수
     const openDeleteConfirmationModal = (transactionToDelete) => {
         setDeleteModalState({ isOpen: true, data: transactionToDelete });
     };
+
     const closeDeleteConfirmationModal = () => {
         setDeleteModalState({ isOpen: false, data: null });
     };
+
     const handleConfirmDelete = () => {
         if (deleteModalState.data) {
-            setTransactions(
-                transactions.filter((tx) => tx.id !== deleteModalState.data.id)
-            );
-            console.log("Deleted Transaction ID:", deleteModalState.data.id);
-            // 만약 삭제한 항목이 수정 중인 항목이었다면 수정 모드 취소
-            if (editingTransaction?.id === deleteModalState.data.id) {
-                setEditingTransaction(null);
-            }
+            // Redux Store에 삭제 요청
+            dispatch(deleteTransaction(deleteModalState.data.id));
         }
         closeDeleteConfirmationModal();
     };
 
-    const handleFilterChange = (filterType) => {
-        setFilter((prevFilter) => ({
-            ...prevFilter,
-            [filterType]: !prevFilter[filterType], // 해당 키의 boolean 값을 토글
-        }));
-    };
-
     useEffect(() => {
-        fetch("/mockData.json")
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then((data) => {
-                setTransactions(data);
-            })
-            .catch((error) => {
-                console.error("Error fetching transactions:", error);
-            });
-    }, []);
+        dispatch(fetchTransactions());
+    }, [dispatch]);
 
     return (
         <>
             <div className="-mt-16 z-10 relative">
-                <SectionForm
-                    key={editingTransaction ? editingTransaction.id : "new"}
-                    onSave={handleSaveTransaction}
-                    editingTransaction={editingTransaction}
-                />
+                <SectionForm />
             </div>
-            <TransactionList
-                transactions={transactions}
-                onEdit={handleEdit}
-                onDelete={openDeleteConfirmationModal}
-                filter={filter}
-                onFilterChange={handleFilterChange}
-            />
+            <TransactionList onDelete={openDeleteConfirmationModal} />
             {deleteModalState.isOpen && (
                 <ActionModal
                     size="l"

@@ -1,14 +1,15 @@
 import { useMemo } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { setFilter, setEditing } from "@/store/transactionsSlice";
 import MonthlySummary from "./MonthlySummary";
 import DailyTransactionGroup from "./DailyTransactionGroup";
 
-const TransactionList = ({
-    transactions,
-    onEdit,
-    onDelete,
-    filter,
-    onFilterChange,
-}) => {
+const TransactionList = ({ onDelete }) => {
+    const { items: transactions, filter } = useSelector(
+        (state) => state.transactions
+    );
+    const dispatch = useDispatch();
+
     // filtering transactions by total income/expense
     const filteredTransactions = useMemo(() => {
         const { income, expense } = filter;
@@ -45,7 +46,7 @@ const TransactionList = ({
             <MonthlySummary
                 transactions={transactions} // MonthlySummary에는 원본 리스트 전달
                 filter={filter}
-                onFilterChange={onFilterChange}
+                onFilterChange={(filterType) => dispatch(setFilter(filterType))}
             />
             {/* 내역은 필터링된 sortedDates 사용 */}
             {sortedDates.map((date) => (
@@ -53,7 +54,7 @@ const TransactionList = ({
                     key={date}
                     date={date}
                     transactions={groupedTransactions[date]}
-                    onEdit={onEdit}
+                    onEdit={(tx) => dispatch(setEditing(tx))}
                     onDelete={onDelete}
                 />
             ))}
