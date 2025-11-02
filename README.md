@@ -12,7 +12,7 @@
     [x] 총수입, 총수출 필터링 개선
     [x] Header의 날짜 변경 시 월별 영어 표시 및 history filtering
     [x] 카테고리 별 배경색을 다르게 하기
-    [ ] Actionmodal을 context API로 공유
+    [ ] Actionmodal을 context API로 공유 -> 2개라서 그냥 내버려 둬도 될 것 같음
     [x] custom Hook 사용
 
 -   캘린더 (선택사항)

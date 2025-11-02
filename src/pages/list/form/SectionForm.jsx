@@ -11,7 +11,7 @@ import {
     CATEGORY_EXPENSES,
     CATEGORY_INCOMES,
 } from "@/assets/constants";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useReducer } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { addTransaction, updateTransaction } from "@/store/transactionsSlice";
 
@@ -21,24 +21,69 @@ const paymentMethodsMap = new Map(
 const categoryIncomesMap = new Map(CATEGORY_INCOMES.map((c) => [c.name, c]));
 const categoryExpensesMap = new Map(CATEGORY_EXPENSES.map((c) => [c.name, c]));
 
+// 폼의 초기 상태
+const initialFormState = {
+    date: new Date().toISOString().slice(0, 10),
+    isPlus: true,
+    amount: "",
+    content: "",
+    selectedMethod: null,
+    selectedCategory: null,
+};
+// 폼 상태 변경 로직
+function formReducer(state, action) {
+    switch (action.type) {
+        // 폼 필드 1개 변경
+        case "SET_FIELD":
+            return {
+                ...state,
+                [action.field]: action.value,
+            };
+        // 수입/지출 토글 (카테고리 초기화)
+        case "TOGGLE_SIGN":
+            return {
+                ...state,
+                isPlus: !state.isPlus,
+                selectedCategory: null, // 부호가 바뀌면 카테고리 목록이 바뀌므로 리셋
+            };
+        // 수정할 데이터 불러오기
+        case "LOAD_TRANSACTION":
+            const tx = action.payload;
+            const txAmount = tx.amount;
+            return {
+                date: tx.date.split("T")[0],
+                isPlus: txAmount > 0,
+                amount: Math.abs(txAmount).toString(),
+                content: tx.content,
+                selectedMethod: paymentMethodsMap.get(tx.paymentMethod) || null,
+                selectedCategory:
+                    (txAmount > 0
+                        ? categoryIncomesMap
+                        : categoryExpensesMap
+                    ).get(tx.category) || null,
+            };
+        // 폼 초기화
+        case "RESET_FORM":
+            return initialFormState;
+        default:
+            return state;
+    }
+}
+
 const SectionForm = () => {
+    // global state
     const editingTransaction = useSelector(
         (state) => state.transactions.editingTransaction
     );
-    const dispatch = useDispatch();
+    const dispatch = useDispatch(); // Redux dispatch
 
-    // For InputDate
-    const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
-    const [isPlus, setIsPlus] = useState(true);
-    const [amount, setAmount] = useState("");
-    const [content, setContent] = useState("");
+    // form state
+    const [formState, dispatchForm] = useReducer(formReducer, initialFormState);
+
+    // modal state
     const [paymentMethods, setPaymentMethods] = useState(
         INITIAL_PAYMENT_METHODS
     );
-    const [selectedMethod, setSelectedMethod] = useState(null);
-    const [selectedCategory, setSelectedCategory] = useState(null);
-
-    // For Payment modal
     const [modalState, setModalState] = useState({
         isOpen: false,
         type: null,
@@ -46,7 +91,19 @@ const SectionForm = () => {
     });
     const [newMethodName, setNewMethodName] = useState("");
 
-    // For Payment method function
+    useEffect(() => {
+        if (editingTransaction) {
+            // "수정 모드"
+            dispatchForm({
+                type: "LOAD_TRANSACTION",
+                payload: editingTransaction,
+            });
+        } else {
+            // "입력 모드"
+            dispatchForm({ type: "RESET_FORM" });
+        }
+    }, [editingTransaction]);
+
     const handleConfirm = () => {
         if (modalState.type === "add" && newMethodName.trim()) {
             const newMethod = { id: Date.now(), name: newMethodName.trim() };
@@ -56,94 +113,56 @@ const SectionForm = () => {
             setPaymentMethods((current) =>
                 current.filter((m) => m.id !== modalState.data.id)
             );
-            if (selectedMethod?.id === modalState.data.id) {
-                setSelectedMethod(null);
+            if (formState.selectedMethod?.id === modalState.data.id) {
+                dispatchForm({
+                    type: "SET_FIELD",
+                    field: "selectedMethod",
+                    value: null,
+                });
             }
         }
         closeModal();
     };
-    // For Payment modal function
-    const openAddModal = () => {
-        setModalState({ isOpen: true, type: "add" });
-    };
-    const openDeleteModal = (methodToDelete) => {
+    const openAddModal = () => setModalState({ isOpen: true, type: "add" });
+    const openDeleteModal = (methodToDelete) =>
         setModalState({ isOpen: true, type: "delete", data: methodToDelete });
-    };
     const closeModal = () => {
         setModalState({ isOpen: false, type: null, data: null });
         setNewMethodName("");
     };
 
-    useEffect(() => {
-        if (editingTransaction) {
-            // "수정 모드"일 때: 폼을 채움
-            setDate(editingTransaction.date.split("T")[0]);
-            setIsPlus(editingTransaction.amount > 0);
-            setAmount(Math.abs(editingTransaction.amount).toString());
-            setContent(editingTransaction.content);
-            setSelectedMethod(
-                paymentMethodsMap.get(editingTransaction.paymentMethod) || null
-            );
-
-            const currentCategoryMap =
-                editingTransaction.amount > 0
-                    ? categoryIncomesMap
-                    : categoryExpensesMap;
-            setSelectedCategory(
-                currentCategoryMap.get(editingTransaction.category) || null
-            );
-        } else {
-            // "입력 모드"일 때 (저장 후 null이 될 때): 폼을 초기화
-            setDate(new Date().toISOString().slice(0, 10));
-            setIsPlus(true);
-            setAmount("");
-            setContent("");
-            setSelectedMethod(null);
-            setSelectedCategory(null);
-        }
-        // editingTransaction이 바뀔 때마다 이 effect가 실행됩니다.
-    }, [editingTransaction]);
-
-    // Validation
     const isFormValid =
-        amount.trim() !== "" &&
-        content.trim() !== "" &&
-        selectedMethod !== null &&
-        selectedCategory !== null;
+        formState.amount.trim() !== "" &&
+        formState.content.trim() !== "" &&
+        formState.selectedMethod !== null &&
+        formState.selectedCategory !== null;
 
     const handleSubmit = (event) => {
-        event.preventDefault(); // form의 기본 제출 동작(새로고침)을 막기
-
-        if (!isFormValid) {
-            return;
-        }
+        event.preventDefault();
+        if (!isFormValid) return;
 
         const transactionData = {
-            date,
-            amount: isPlus ? Number(amount) : -Number(amount),
-            content,
-            paymentMethod: selectedMethod.name,
-            category: selectedCategory.name,
+            date: formState.date,
+            amount: formState.isPlus
+                ? Number(formState.amount)
+                : -Number(formState.amount),
+            content: formState.content,
+            paymentMethod: formState.selectedMethod.name,
+            category: formState.selectedCategory.name,
         };
 
         if (editingTransaction) {
-            // updateTransaction Action에 '수정된 데이터'를 실어 보냄
             dispatch(
                 updateTransaction({
                     ...transactionData,
                     id: editingTransaction.id,
                 })
             );
+            // 'update' 후에는 useEffect가 editingTransaction(null)을 감지하고 'RESET_FORM'을 호출
         } else {
-            // addTransaction Action에 '새 데이터'를 실어 보냄
             dispatch(addTransaction({ ...transactionData, id: Date.now() }));
-
-            setDate(new Date().toISOString().slice(0, 10));
-            setIsPlus(true);
-            setAmount("");
-            setContent("");
-            setSelectedMethod(null);
-            setSelectedCategory(null);
+            // 'add' 후에는 수동으로 폼 리셋
+            dispatchForm({ type: "RESET_FORM" });
         }
     };
 
@@ -155,16 +174,34 @@ const SectionForm = () => {
                 className="bg-white flex divide-x divide-black items-center w-[960px] h-[100px] px-[12px] border border-black mx-auto"
             >
                 <div className="flex items-center pr-4 w-[140px] h-[60px]">
-                    <InputDate value={date} onChange={setDate} />
+                    <InputDate
+                        value={formState.date}
+                        onChange={(newDate) =>
+                            dispatchForm({
+                                type: "SET_FIELD",
+                                field: "date",
+                                value: newDate,
+                            })
+                        }
+                    />
                 </div>
 
                 <div className="flex items-center px-4 w-[240px] h-[60px]">
-                    <SignToggleButton isPlus={isPlus} onChange={setIsPlus} />
+                    <SignToggleButton
+                        isPlus={formState.isPlus}
+                        onChange={() => dispatchForm({ type: "TOGGLE_SIGN" })}
+                    />
 
                     <div className="flex items-center ml-2">
                         <Amount
-                            value={amount}
-                            onChange={setAmount}
+                            value={formState.amount}
+                            onChange={(newAmount) =>
+                                dispatchForm({
+                                    type: "SET_FIELD",
+                                    field: "amount",
+                                    value: newAmount,
+                                })
+                            }
                             readOnly={false}
                         />
                         <span className="text-xl text-black ml-1"> 원</span>
@@ -172,23 +209,48 @@ const SectionForm = () => {
                 </div>
 
                 <div className="flex items-center px-4 w-[200px] h-[60px]">
-                    <InputContent value={content} onChange={setContent} />
+                    <InputContent
+                        value={formState.content}
+                        onChange={(newContent) =>
+                            dispatchForm({
+                                type: "SET_FIELD",
+                                field: "content",
+                                value: newContent,
+                            })
+                        }
+                    />
                 </div>
 
                 <div className="flex items-center px-4 w-[160px] h-[60px]">
                     <Payment
                         options={paymentMethods}
-                        selectedOption={selectedMethod}
-                        onSelect={setSelectedMethod}
+                        selectedOption={formState.selectedMethod}
+                        onSelect={(newMethod) =>
+                            dispatchForm({
+                                type: "SET_FIELD",
+                                field: "selectedMethod",
+                                value: newMethod,
+                            })
+                        }
                         onAdd={openAddModal}
                         onDelete={openDeleteModal}
                     />
                 </div>
                 <div className="flex items-center px-4 w-[160px] h-[60px]">
                     <Category
-                        options={isPlus ? CATEGORY_INCOMES : CATEGORY_EXPENSES}
-                        selectedOption={selectedCategory}
-                        onSelect={setSelectedCategory}
+                        options={
+                            formState.isPlus
+                                ? CATEGORY_INCOMES
+                                : CATEGORY_EXPENSES
+                        }
+                        selectedOption={formState.selectedCategory}
+                        onSelect={(newCategory) =>
+                            dispatchForm({
+                                type: "SET_FIELD",
+                                field: "selectedCategory",
+                                value: newCategory,
+                            })
+                        }
                     />
                 </div>
                 <div className="flex items-center pl-4 w-auto h-[60px]">
