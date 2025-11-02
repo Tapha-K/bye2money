@@ -1,11 +1,22 @@
-import { useCallback, useMemo } from "react";
-import Amount from "@/components/Amount";
+import React, { useCallback, useMemo } from "react";
+import Amount from "../../../components/Amount";
 import cn from "classnames";
-import { categoryStyleMap, DEFAULT_STYLE } from "@/assets/constants";
+import { categoryStyleMap, DEFAULT_STYLE } from "../../../assets/constants";
+import { Transaction } from "../../../store/globalType";
 
-const TransactionItem = ({ transaction, onEdit, onDelete }) => {
+interface TransactionItemProps {
+    transaction: Transaction;
+    onEdit: (transaction: Transaction) => void;
+    onDelete: (transaction: Transaction) => void;
+}
+
+const TransactionItem: React.FC<TransactionItemProps> = ({
+    transaction,
+    onEdit,
+    onDelete,
+}) => {
     const handleDeleteClick = useCallback(
-        (event) => {
+        (event: React.MouseEvent) => {
             event.stopPropagation();
             onDelete(transaction);
         },

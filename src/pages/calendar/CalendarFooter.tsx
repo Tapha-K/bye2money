@@ -1,10 +1,18 @@
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 
-const CalendarFooter = ({ transactions }) => {
+interface FooterTransaction {
+    amount: number;
+}
+
+interface CalendarFooterProps {
+    transactions: FooterTransaction[];
+}
+
+const CalendarFooter: React.FC<CalendarFooterProps> = ({ transactions }) => {
     const { totalIncome, totalExpense, netTotal } = useMemo(() => {
         let totalIncome = 0;
         let totalExpense = 0;
-        transactions.forEach((tx) => {
+        transactions.forEach((tx: FooterTransaction) => {
             if (tx.amount > 0) totalIncome += tx.amount;
             else totalExpense += tx.amount;
         });

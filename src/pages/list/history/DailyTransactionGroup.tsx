@@ -1,7 +1,20 @@
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 import TransactionItem from "./TransactionItem";
+import { Transaction } from "../../../store/globalType";
 
-const DailyTransactionGroup = ({ date, transactions, onEdit, onDelete }) => {
+interface DailyTransactionGroupProps {
+    date: string;
+    transactions: Transaction[];
+    onEdit: (transaction: Transaction) => void;
+    onDelete: (transaction: Transaction) => void;
+}
+
+const DailyTransactionGroup: React.FC<DailyTransactionGroupProps> = ({
+    date,
+    transactions,
+    onEdit,
+    onDelete,
+}) => {
     const dailyIncome = useMemo(() => {
         return transactions.reduce(
             (sum, tx) => (tx.amount > 0 ? sum + tx.amount : sum),

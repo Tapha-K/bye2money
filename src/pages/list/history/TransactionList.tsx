@@ -1,23 +1,30 @@
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { setFilter, setEditing } from "@/store/transactionsSlice";
-import { useDate } from "@/pages/layout/Layout";
+import { setFilter, setEditing } from "../../../store/transactionsSlice";
+import { useDate } from "../../layout/Layout";
 import MonthlySummary from "./MonthlySummary";
 import DailyTransactionGroup from "./DailyTransactionGroup";
+import { Transaction } from "../../../store/globalType";
+import { RootState } from "../../../store/store";
 
-const TransactionList = ({ onDelete }) => {
+// Props 타입 정의
+interface TransactionListProps {
+    onDelete: (transaction: Transaction) => void;
+}
+
+const TransactionList: React.FC<TransactionListProps> = ({ onDelete }) => {
     const { items: allTransactions, filter } = useSelector(
-        (state) => state.transactions
+        (state: RootState) => state.transactions
     );
     const dispatch = useDispatch();
     const { currentDate } = useDate();
 
     // 전체 transactions을 Header의 '월'로 필터링
-    const monthlyTransactions = useMemo(() => {
+    const monthlyTransactions: Transaction[] = useMemo(() => {
         const currentYear = currentDate.getFullYear();
         const currentMonth = currentDate.getMonth(); // 0-11 기반 월
 
-        return allTransactions.filter((tx) => {
+        return allTransactions.filter((tx: Transaction) => {
             const txDate = new Date(tx.date); // 👈 KST로 통일
             return (
                 txDate.getFullYear() === currentYear &&
@@ -44,17 +51,23 @@ const TransactionList = ({ onDelete }) => {
     }, [monthlyTransactions, filter]);
 
     // filteredTransactions 기준으로 날짜 별 그룹
-    const groupedTransactions = filteredTransactions.reduce((groups, tx) => {
-        const date = tx.date.split("T")[0]; // 날짜 부분만 추출
-        if (!groups[date]) {
-            groups[date] = [];
-        }
-        groups[date].push(tx);
-        return groups;
-    }, {});
+    const groupedTransactions: { [dateKey: string]: Transaction[] } =
+        useMemo(() => {
+            return filteredTransactions.reduce(
+                (groups: { [dateKey: string]: Transaction[] }, tx) => {
+                    const date = tx.date.split("T")[0];
+                    if (!groups[date]) {
+                        groups[date] = [];
+                    }
+                    groups[date].push(tx);
+                    return groups;
+                },
+                {}
+            );
+        }, [filteredTransactions]);
 
     const sortedDates = Object.keys(groupedTransactions).sort(
-        (a, b) => new Date(b) - new Date(a)
+        (a, b) => new Date(b).getTime() - new Date(a).getTime()
     );
 
     return (

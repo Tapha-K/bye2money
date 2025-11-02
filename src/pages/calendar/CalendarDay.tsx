@@ -1,7 +1,15 @@
+import React from "react";
 import cn from "classnames";
-import Amount from "@/components/Amount";
+import Amount from "../../components/Amount";
+import { Summary } from "./CalendarPage";
 
-const CalendarDay = ({ day, summary, isToday }) => {
+interface CalendarDayProps {
+    day: number;
+    summary?: Summary; // summary는 undefined일 수 있음
+    isToday: boolean;
+}
+
+const CalendarDay: React.FC<CalendarDayProps> = ({ day, summary, isToday }) => {
     return (
         <div
             className={cn(

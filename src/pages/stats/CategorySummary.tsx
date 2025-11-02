@@ -1,7 +1,14 @@
-import Amount from "@/components/Amount";
+import React from "react";
+import Amount from "../../components/Amount";
 import cn from "classnames";
+import { CategoryStat } from "./StatsPage";
 
-const CategorySummary = ({ stats, total }) => {
+interface CategorySummaryProps {
+    stats: CategoryStat[];
+    total: number;
+}
+
+const CategorySummary: React.FC<CategorySummaryProps> = ({ stats, total }) => {
     return (
         <div className="w-full">
             {/* 1. 표 헤더 */}
@@ -21,7 +28,7 @@ const CategorySummary = ({ stats, total }) => {
             {/* 2. 표 바디 (카테고리 목록) */}
             <div className="border-y border-black">
                 {stats.length > 0 ? (
-                    stats.map((stat) => (
+                    stats.map((stat: CategoryStat) => (
                         <div
                             key={stat.name}
                             className="flex justify-between items-stretch"

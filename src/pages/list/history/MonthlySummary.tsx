@@ -1,6 +1,21 @@
-import CircleButton from "@/components/CircleButton";
+import React from "react";
+import CircleButton from "../../../components/CircleButton";
+import { Transaction } from "../../../store/globalType";
 
-const MonthlySummary = ({ transactions, filter, onFilterChange }) => {
+interface MonthlySummaryProps {
+    transactions: Transaction[];
+    filter: {
+        income: boolean;
+        expense: boolean;
+    };
+    onFilterChange: (filterType: "income" | "expense") => void;
+}
+
+const MonthlySummary: React.FC<MonthlySummaryProps> = ({
+    transactions,
+    filter,
+    onFilterChange,
+}) => {
     const totalCount = transactions.length;
     const totalIncome = transactions.reduce(
         (sum, tx) => (tx.amount > 0 ? sum + tx.amount : sum),

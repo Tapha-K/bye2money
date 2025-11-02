@@ -1,9 +1,19 @@
-import { useCallback } from "react";
+import React, { useCallback } from "react";
 import { Link } from "react-router-dom";
-import { MONTH_NAMES } from "@/assets/constants";
-import CircleButton from "@/components/CircleButton";
+import { MONTH_NAMES } from "../../assets/constants";
+import CircleButton from "../../components/CircleButton";
 
-const Header = ({ currentDate, setCurrentDate, viewMode }) => {
+interface HeaderProps {
+    currentDate: Date;
+    setCurrentDate: React.Dispatch<React.SetStateAction<Date>>;
+    viewMode: "list" | "calendar" | "stats";
+}
+
+const Header: React.FC<HeaderProps> = ({
+    currentDate,
+    setCurrentDate,
+    viewMode,
+}) => {
     // --- 날짜 변경 ---
     const handlePrevMonth = useCallback(() => {
         setCurrentDate(

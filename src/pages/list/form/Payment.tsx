@@ -1,13 +1,34 @@
-import { useState, useRef, useEffect, useCallback } from "react";
-import ChevronDownIcon from "@/components/ChevronDownIcon";
+import React, { useState, useRef, useEffect, useCallback } from "react";
+import ChevronDownIcon from "../../../components/ChevronDownIcon";
 
-const Payment = ({ options, selectedOption, onSelect, onDelete, onAdd }) => {
+// 카테고리/결제수단 옵션 공통 타입
+interface OptionType {
+    id: number | string;
+    name: string;
+}
+
+// Props 타입 정의
+interface PaymentProps {
+    options: OptionType[];
+    selectedOption: OptionType | null;
+    onSelect: (option: OptionType) => void;
+    onDelete: (option: OptionType) => void;
+    onAdd: () => void;
+}
+
+const Payment: React.FC<PaymentProps> = ({
+    options,
+    selectedOption,
+    onSelect,
+    onDelete,
+    onAdd,
+}) => {
     const [isOpen, setIsOpen] = useState(false);
     // 드롭다운 DOM 요소를 가리킬 ref
-    const dropdownRef = useRef(null);
+    const dropdownRef = useRef<HTMLDivElement>(null);
 
     const handleSelect = useCallback(
-        (option) => {
+        (option: OptionType) => {
             onSelect(option);
             setIsOpen(false);
         },
@@ -15,7 +36,7 @@ const Payment = ({ options, selectedOption, onSelect, onDelete, onAdd }) => {
     );
 
     const handleDeleteClick = useCallback(
-        (event, option) => {
+        (event: React.MouseEvent, option: OptionType) => {
             event.stopPropagation();
             onDelete(option);
         },
@@ -23,7 +44,7 @@ const Payment = ({ options, selectedOption, onSelect, onDelete, onAdd }) => {
     );
 
     const handleAddClick = useCallback(
-        (event) => {
+        (event: React.MouseEvent) => {
             event.stopPropagation();
             onAdd();
         },
@@ -31,10 +52,10 @@ const Payment = ({ options, selectedOption, onSelect, onDelete, onAdd }) => {
     );
 
     useEffect(() => {
-        const handleClickOutside = (event) => {
+        const handleClickOutside = (event: MouseEvent) => {
             if (
                 dropdownRef.current &&
-                !dropdownRef.current.contains(event.target)
+                !dropdownRef.current.contains(event.target as Node)
             ) {
                 setIsOpen(false);
             }
@@ -63,7 +84,7 @@ const Payment = ({ options, selectedOption, onSelect, onDelete, onAdd }) => {
 
             {isOpen && (
                 <ul className="absolute mt-10 w-full bg-white border border-t-0 border-black z-10 divide-y divide-black">
-                    {options.map((option) => (
+                    {options.map((option: OptionType) => (
                         <li
                             key={option.id}
                             className="flex justify-between items-center px-3 py-4"

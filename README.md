@@ -5,7 +5,7 @@
     [x] classnames module을 활용해서 스타일 제어, 상수 관리하는 파일 만들어서 간소화
     [x] react Hook api (useMemo, useReducer, useCallback) 찾아보고 적용
     [x] SectionForm에 store로 쓸만한 library 찾아서 도입 -> Context-API
-    [ ] Typescript로 변경 후 인터페이스 정의
+    [x] Typescript로 변경 후 인터페이스 정의 (AI 도움 많이 받음)
 
 -   셀프 보완 사항
     [x] 항목을 눌렀을 때 결제수단이 form으로 제대로 올라가지 않는 문제 수정

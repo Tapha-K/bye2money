@@ -1,7 +1,9 @@
-import { useDate } from "@/pages/layout/Layout";
+import React from "react";
+import { useDate } from "../layout/Layout";
 import CalendarDay from "./CalendarDay";
+import { DailySummaryMap } from "./CalendarPage";
 
-const isSameDay = (date1, date2) => {
+const isSameDay = (date1: Date, date2: Date): boolean => {
     return (
         date1.getFullYear() === date2.getFullYear() &&
         date1.getMonth() === date2.getMonth() &&
@@ -9,7 +11,15 @@ const isSameDay = (date1, date2) => {
     );
 };
 
-const CalendarBody = ({ dailySummaries, today }) => {
+interface CalendarBodyProps {
+    dailySummaries: DailySummaryMap;
+    today: Date;
+}
+
+const CalendarBody: React.FC<CalendarBodyProps> = ({
+    dailySummaries,
+    today,
+}) => {
     // Context에서 현재 날짜를 가져옴
     const { currentDate } = useDate();
     const year = currentDate.getFullYear();
@@ -21,7 +31,7 @@ const CalendarBody = ({ dailySummaries, today }) => {
     const startDayOfWeek = firstDayOfMonth.getDay(); // 0 = 일요일 ~ 6 = 토요일
     const daysInMonth = lastDayOfMonth.getDate();
 
-    const calendarDays = [];
+    const calendarDays: React.ReactNode[] = [];
 
     // 1일이 시작하기 전의 빈 칸
     for (let i = 0; i < startDayOfWeek; i++) {

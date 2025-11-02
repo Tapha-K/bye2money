@@ -1,7 +1,18 @@
 import React from "react";
+import { CategoryStat } from "./StatsPage";
+
+interface DonutChartProps {
+    stats: CategoryStat[];
+}
 
 // SVG 경로(path)를 계산하기 위한 헬퍼 함수
-const getArcPath = (center, outerRadius, innerRadius, startAngle, endAngle) => {
+const getArcPath = (
+    center: number,
+    outerRadius: number,
+    innerRadius: number,
+    startAngle: number,
+    endAngle: number
+): string => {
     // 각도를 라디안으로 변환 (SVG는 Y축이 반대이므로 -90도(위쪽)에서 시작)
     const startRad = (startAngle - 90) * (Math.PI / 180);
     const endRad = (endAngle - 90) * (Math.PI / 180);
@@ -37,7 +48,7 @@ const getArcPath = (center, outerRadius, innerRadius, startAngle, endAngle) => {
     ].join(" ");
 };
 
-const DonutChart = ({ stats }) => {
+const DonutChart: React.FC<DonutChartProps> = ({ stats }) => {
     const size = 500; // SVG 캔버스 크기
     const center = size / 2;
     const outerRadius = 160;
@@ -48,7 +59,7 @@ const DonutChart = ({ stats }) => {
     return (
         <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
             {stats.length > 0 ? (
-                stats.map((stat) => {
+                stats.map((stat: CategoryStat) => {
                     const sliceAngle = (stat.percentage / 100) * 360;
                     const startAngle = currentAngle;
                     let endAngle = currentAngle + sliceAngle;

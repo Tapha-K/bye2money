@@ -1,16 +1,28 @@
 import cn from "classnames";
+import React from "react";
 
-const CircleButton = ({
+interface CircleButtonProps {
+    size?: "m" | "s";
+    isActive: boolean;
+    activeClass: string;
+    inactiveClass: string;
+    imageUrl: string;
+    onClick?: () => void;
+    type?: "button" | "submit" | "reset";
+}
+
+const CircleButton: React.FC<CircleButtonProps> = ({
     size = "m",
     isActive,
     activeClass,
     inactiveClass,
     imageUrl,
     onClick,
+    type = "button",
 }) => {
     return (
         <button
-            type="button"
+            type={type}
             onClick={onClick}
             className={cn(
                 "rounded-full flex justify-center items-center transition-colors",

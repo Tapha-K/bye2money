@@ -1,6 +1,16 @@
 import cn from "classnames";
+import React from "react";
 
-const ActionModal = ({
+interface ActionModalProps {
+    size?: "m" | "l";
+    title: string;
+    confirmText: string;
+    children: React.ReactNode;
+    onConfirm: () => void;
+    onClose: () => void;
+}
+
+const ActionModal: React.FC<ActionModalProps> = ({
     size = "m",
     title,
     confirmText,

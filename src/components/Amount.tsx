@@ -1,6 +1,15 @@
 import cn from "classnames";
+import React from "react";
 
-const Amount = ({
+interface AmountProps {
+    value: string | number;
+    readOnly?: boolean;
+    colorVariant?: "default" | "neutral";
+    className?: string;
+    onChange?: (value: string) => void;
+}
+
+const Amount: React.FC<AmountProps> = ({
     value,
     readOnly = true,
     colorVariant = "default", // neutral이면 무조건 검정색
@@ -15,7 +24,7 @@ const Amount = ({
         numericValue
     ).toLocaleString()}`;
 
-    const handleChange = (e) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const rawValue = e.target.value.replace(/[^0-9]/g, "");
         if (onChange) {
             onChange(rawValue);

@@ -1,9 +1,20 @@
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
-import { useDate } from "@/pages/layout/Layout";
+import { useDate } from "../layout/Layout";
+import { Transaction } from "../../store/globalType";
+import { RootState } from "../../store/store";
 import DonutChart from "./DonutChart";
 import CategorySummary from "./CategorySummary";
-import { CATEGORY_EXPENSES, DEFAULT_STYLE } from "@/assets/constants";
+import { CATEGORY_EXPENSES, DEFAULT_STYLE } from "../../assets/constants";
+
+// 자식 컴포넌트들에게 전달할 통계 데이터 타입
+export interface CategoryStat {
+    name: string;
+    amount: number;
+    percentage: number;
+    color: string;
+    bgClass: string;
+}
 
 const expenseStyleMap = new Map(
     CATEGORY_EXPENSES.map((cat) => [
@@ -16,18 +27,18 @@ const DEFAULT_STYLE_OBJ = {
     bgClass: DEFAULT_STYLE.bgClass, // 미분류용 Tailwind 클래스 (CategorySummary용)
 };
 
-const StatsPage = () => {
+const StatsPage: React.FC = () => {
     const { items: allTransactions } = useSelector(
-        (state) => state.transactions
+        (state: RootState) => state.transactions
     );
     const { currentDate } = useDate();
 
     // 1. 현재 월의 '지출' 내역만 필터링
-    const monthlyExpenses = useMemo(() => {
+    const monthlyExpenses: Transaction[] = useMemo(() => {
         const currentYear = currentDate.getFullYear();
         const currentMonth = currentDate.getMonth();
 
-        return allTransactions.filter((tx) => {
+        return allTransactions.filter((tx: Transaction) => {
             const txDate = new Date(tx.date);
             return (
                 tx.amount < 0 && // 지출만
@@ -40,16 +51,19 @@ const StatsPage = () => {
     // 2. 카테고리별 지출 합계 및 비율 계산
     const { categoryStats, totalExpense } = useMemo(() => {
         // { 식비: 10000, 교통: 5000, ... }
-        const statsMap = monthlyExpenses.reduce((acc, tx) => {
-            const category = tx.category || "미분류";
-            const amount = Math.abs(tx.amount);
+        const statsMap: { [key: string]: number } = monthlyExpenses.reduce(
+            (acc: { [key: string]: number }, tx: Transaction) => {
+                const category = tx.category || "미분류";
+                const amount = Math.abs(tx.amount);
 
-            if (!acc[category]) {
-                acc[category] = 0;
-            }
-            acc[category] += amount;
-            return acc;
-        }, {});
+                if (!acc[category]) {
+                    acc[category] = 0;
+                }
+                acc[category] += amount;
+                return acc;
+            },
+            {}
+        );
 
         const total = Object.values(statsMap).reduce(
             (sum, val) => sum + val,
@@ -57,7 +71,7 @@ const StatsPage = () => {
         );
 
         // [{ name: "식비", amount: 10000, percentage: 66.7 }, ...]
-        const statsArray = Object.entries(statsMap)
+        const statsArray: CategoryStat[] = Object.entries(statsMap)
             .map(([name, amount]) => {
                 // 5. [수정] Map에서 스타일 객체(color + bgClass)를 가져옵니다.
                 const style = expenseStyleMap.get(name) || DEFAULT_STYLE_OBJ;

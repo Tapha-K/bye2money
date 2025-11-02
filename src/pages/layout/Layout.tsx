@@ -1,12 +1,17 @@
-import { useState, useEffect, createContext, useContext } from "react";
+import React, { useState, useEffect, createContext, useContext } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { fetchTransactions } from "@/store/transactionsSlice";
+import { fetchTransactions } from "../../store/transactionsSlice";
 import Header from "./Header";
 
-export const DateContext = createContext(null);
+interface DateContextType {
+    currentDate: Date;
+    setCurrentDate: React.Dispatch<React.SetStateAction<Date>>;
+}
 
-export const useDate = () => {
+export const DateContext = createContext<DateContextType | null>(null);
+
+export const useDate = (): DateContextType => {
     const context = useContext(DateContext);
     if (!context) {
         throw new Error("Cannot use date context outside of a DateProvider");
@@ -20,7 +25,7 @@ const Layout = () => {
 
     const dispatch = useDispatch();
     useEffect(() => {
-        dispatch(fetchTransactions());
+        (dispatch as Function)(fetchTransactions());
     }, [dispatch]);
 
     const getViewMode = () => {
