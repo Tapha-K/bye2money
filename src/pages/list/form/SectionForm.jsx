@@ -11,9 +11,15 @@ import {
     CATEGORY_EXPENSES,
     CATEGORY_INCOMES,
 } from "@/assets/constants";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { addTransaction, updateTransaction } from "@/store/transactionsSlice";
+
+const paymentMethodsMap = new Map(
+    INITIAL_PAYMENT_METHODS.map((m) => [m.name, m])
+);
+const categoryIncomesMap = new Map(CATEGORY_INCOMES.map((c) => [c.name, c]));
+const categoryExpensesMap = new Map(CATEGORY_EXPENSES.map((c) => [c.name, c]));
 
 const SectionForm = () => {
     const editingTransaction = useSelector(
@@ -22,38 +28,16 @@ const SectionForm = () => {
     const dispatch = useDispatch();
 
     // For InputDate
-    const [date, setDate] = useState(() =>
-        editingTransaction
-            ? editingTransaction.date.split("T")[0]
-            : new Date().toISOString().slice(0, 10)
-    );
-    // For SignToggleButton
-    const [isPlus, setIsPlus] = useState(() =>
-        // ✅ 초기값 함수 사용
-        editingTransaction ? editingTransaction.amount > 0 : true
-    );
-    // For Amount
-    const [amount, setAmount] = useState(() =>
-        // ✅ 초기값 함수 사용
-        editingTransaction ? Math.abs(editingTransaction.amount).toString() : ""
-    );
-    // For InputContent
-    const [content, setContent] = useState(() =>
-        editingTransaction ? editingTransaction.content : ""
-    );
-    // For Payment method
+    const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
+    const [isPlus, setIsPlus] = useState(true);
+    const [amount, setAmount] = useState("");
+    const [content, setContent] = useState("");
     const [paymentMethods, setPaymentMethods] = useState(
         INITIAL_PAYMENT_METHODS
     );
-    const [selectedMethod, setSelectedMethod] = useState(() => {
-        // ✅ 초기값 함수 사용
-        if (!editingTransaction) return null;
-        return (
-            paymentMethods.find(
-                (m) => m.name === editingTransaction.paymentMethod
-            ) || null
-        );
-    });
+    const [selectedMethod, setSelectedMethod] = useState(null);
+    const [selectedCategory, setSelectedCategory] = useState(null);
+
     // For Payment modal
     const [modalState, setModalState] = useState({
         isOpen: false,
@@ -62,19 +46,6 @@ const SectionForm = () => {
     });
     const [newMethodName, setNewMethodName] = useState("");
 
-    const [selectedCategory, setSelectedCategory] = useState(() => {
-        // ✅ 초기값 함수 사용
-        if (!editingTransaction) return null;
-        const currentCategories =
-            editingTransaction.amount > 0
-                ? CATEGORY_INCOMES
-                : CATEGORY_EXPENSES;
-        return (
-            currentCategories.find(
-                (c) => c.name === editingTransaction.category
-            ) || null
-        );
-    });
     // For Payment method function
     const handleConfirm = () => {
         if (modalState.type === "add" && newMethodName.trim()) {
@@ -102,6 +73,37 @@ const SectionForm = () => {
         setModalState({ isOpen: false, type: null, data: null });
         setNewMethodName("");
     };
+
+    useEffect(() => {
+        if (editingTransaction) {
+            // "수정 모드"일 때: 폼을 채움
+            setDate(editingTransaction.date.split("T")[0]);
+            setIsPlus(editingTransaction.amount > 0);
+            setAmount(Math.abs(editingTransaction.amount).toString());
+            setContent(editingTransaction.content);
+            setSelectedMethod(
+                paymentMethodsMap.get(editingTransaction.paymentMethod) || null
+            );
+
+            const currentCategoryMap =
+                editingTransaction.amount > 0
+                    ? categoryIncomesMap
+                    : categoryExpensesMap;
+            setSelectedCategory(
+                currentCategoryMap.get(editingTransaction.category) || null
+            );
+        } else {
+            // "입력 모드"일 때 (저장 후 null이 될 때): 폼을 초기화
+            setDate(new Date().toISOString().slice(0, 10));
+            setIsPlus(true);
+            setAmount("");
+            setContent("");
+            setSelectedMethod(null);
+            setSelectedCategory(null);
+        }
+        // editingTransaction이 바뀔 때마다 이 effect가 실행됩니다.
+    }, [editingTransaction]);
+
     // Validation
     const isFormValid =
         amount.trim() !== "" &&
@@ -135,11 +137,7 @@ const SectionForm = () => {
         } else {
             // addTransaction Action에 '새 데이터'를 실어 보냄
             dispatch(addTransaction({ ...transactionData, id: Date.now() }));
-        }
 
-        // 저장 후 폼 초기화 (editingTranstaction이 null일 때의 초기값과 동일하게)
-        if (!editingTransaction) {
-            // 입력 모드에서 저장했을 때만 초기화
             setDate(new Date().toISOString().slice(0, 10));
             setIsPlus(true);
             setAmount("");
