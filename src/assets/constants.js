@@ -35,3 +35,5 @@ export const MONTH_NAMES = [
     "November",
     "December",
 ];
+
+export const WEEKDAY_NAMES = ["일", "월", "화", "수", "목", "금", "토"];

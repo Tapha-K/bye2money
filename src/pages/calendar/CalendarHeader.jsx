@@ -1,12 +1,10 @@
+import { WEEKDAY_NAMES } from "@/assets/constants";
+
 const CalendarHeader = () => {
-    const days = ["일", "월", "화", "수", "목", "금", "토"];
     return (
-        <div className="grid grid-cols-7">
-            {days.map((day) => (
-                <div
-                    key={day}
-                    className="text-center py-2 border-x border-b border-black"
-                >
+        <div className="grid grid-cols-7 divide-x divide-black border-b border-black">
+            {WEEKDAY_NAMES.map((day) => (
+                <div key={day} className="text-center py-2">
                     {day}
                 </div>
             ))}

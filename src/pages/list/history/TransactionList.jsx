@@ -14,11 +14,14 @@ const TransactionList = ({ onDelete }) => {
 
     // 전체 transactions을 Header의 '월'로 필터링
     const monthlyTransactions = useMemo(() => {
+        const currentYear = currentDate.getFullYear();
+        const currentMonth = currentDate.getMonth(); // 0-11 기반 월
+
         return allTransactions.filter((tx) => {
-            const txDate = new Date(tx.date);
+            const txDate = new Date(tx.date); // 👈 KST로 통일
             return (
-                txDate.getFullYear() === currentDate.getFullYear() &&
-                txDate.getMonth() === currentDate.getMonth()
+                txDate.getFullYear() === currentYear &&
+                txDate.getMonth() === currentMonth
             );
         });
     }, [allTransactions, currentDate]);

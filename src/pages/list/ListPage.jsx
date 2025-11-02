@@ -3,12 +3,9 @@ import SectionForm from "./form/SectionForm";
 import TransactionList from "./history/TransactionList";
 import ActionModal from "@/components/ActionModal";
 import Amount from "@/components/Amount";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
-import {
-    fetchTransactions,
-    deleteTransaction,
-} from "@/store/transactionsSlice";
+import { deleteTransaction } from "@/store/transactionsSlice";
 
 const ListPage = () => {
     const [deleteModalState, setDeleteModalState] = useState({
@@ -33,10 +30,6 @@ const ListPage = () => {
         }
         closeDeleteConfirmationModal();
     };
-
-    useEffect(() => {
-        dispatch(fetchTransactions());
-    }, [dispatch]);
 
     return (
         <>

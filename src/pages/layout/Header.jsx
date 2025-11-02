@@ -31,7 +31,7 @@ const Header = ({ currentDate, setCurrentDate, viewMode }) => {
                     >
                         &lt;
                     </button>
-                    <div className="text-center">
+                    <div className="text-center w-[60px]">
                         <p className="text-m mb-3">
                             {currentDate.getFullYear()}
                         </p>

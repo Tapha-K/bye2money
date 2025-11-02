@@ -1,5 +1,7 @@
-import { useState, createContext, useContext } from "react";
+import { useState, useEffect, createContext, useContext } from "react";
 import { Outlet, useLocation } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { fetchTransactions } from "@/store/transactionsSlice";
 import Header from "./Header";
 
 export const DateContext = createContext(null);
@@ -15,6 +17,11 @@ export const useDate = () => {
 const Layout = () => {
     const [currentDate, setCurrentDate] = useState(new Date());
     const location = useLocation(); // 현재 경로(URL)를 가져옴
+
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(fetchTransactions());
+    }, [dispatch]);
 
     const getViewMode = () => {
         if (location.pathname === "/calendar") return "calendar";
