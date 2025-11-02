@@ -4,7 +4,7 @@
     [x] react router, layout file 활용하여 페이징
     [x] classnames module을 활용해서 스타일 제어, 상수 관리하는 파일 만들어서 간소화
     [x] react Hook api (useMemo, useReducer, useCallback) 찾아보고 적용
-    [x] SectionForm에 store로 쓸만한 library 찾아서 도입
+    [x] SectionForm에 store로 쓸만한 library 찾아서 도입 -> Context-API
     [ ] Typescript로 변경 후 인터페이스 정의
 
 -   셀프 보완 사항
@@ -19,7 +19,7 @@
     [x] 달력 만들고 필요한 state 연결
     [x] 현재 날짜에 해당하는 날의 배경을 차별화
 
--   시각화 (선택사항)
+-   시각화 (선택사항, AI로 구현)
     [x] 필요한 state 연결하고 카테고리 별 합계 계산
     [x] 그래프 그리는 법 학습 후 구현
     [ ] 카테고리 눌렀을 때 내역 띄우기

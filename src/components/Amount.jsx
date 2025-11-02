@@ -11,7 +11,7 @@ const Amount = ({
     const isIncome = numericValue > 0;
     const isZero = numericValue === 0;
 
-    const formattedValue = `${readOnly && isIncome ? "+" : "-"}${Math.abs(
+    const formattedValue = `${readOnly ? (isIncome ? "+" : "-") : ""}${Math.abs(
         numericValue
     ).toLocaleString()}`;
 
