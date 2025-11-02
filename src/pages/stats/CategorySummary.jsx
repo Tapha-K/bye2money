@@ -1,4 +1,5 @@
 import Amount from "@/components/Amount";
+import cn from "classnames";
 
 const CategorySummary = ({ stats, total }) => {
     return (
@@ -18,18 +19,23 @@ const CategorySummary = ({ stats, total }) => {
             </div>
 
             {/* 2. 표 바디 (카테고리 목록) */}
-            <div className="border border-black divide-y divide-black">
+            <div className="border-y border-black">
                 {stats.length > 0 ? (
                     stats.map((stat) => (
                         <div
                             key={stat.name}
-                            className="flex justify-between items-center py-4 divide-x divide-black"
+                            className="flex justify-between items-stretch"
                         >
-                            <div className="flex justify-center items-center w-[100px]">
+                            <div
+                                className={cn(
+                                    "flex justify-center items-center w-[100px] opacity-80 py-5",
+                                    stat.bgClass // (e.g., "bg-blue-200")
+                                )}
+                            >
                                 {/* 카테고리 이름 */}
                                 <span className="text-xl">{stat.name}</span>
                             </div>
-                            <div className="flex justify-between items-center w-[300px]">
+                            <div className="flex justify-between items-center w-[260px]">
                                 {/* 비율 */}
                                 <span className="text-xl text-black pl-10">
                                     {stat.percentage.toFixed(0)}%

@@ -21,7 +21,7 @@ const Header = ({ currentDate, setCurrentDate, viewMode }) => {
         <header className="flex items-center h-[200px] bg-[#9f9f9f]">
             <div className="flex justify-between items-center w-[960px] mx-auto mb-[50px]">
                 {/* 1. 로고 */}
-                <h1 className="w-[160px] text-2xl ml-[20px]">Wise Wallet</h1>
+                <h1 className="w-[160px] text-4xl ml-[20px]">Wise Wallet</h1>
 
                 {/* 2. 날짜 네비게이터 */}
                 <div className="flex items-center gap-[60px]">
@@ -32,11 +32,11 @@ const Header = ({ currentDate, setCurrentDate, viewMode }) => {
                         &lt;
                     </button>
                     <div className="text-center w-[60px]">
-                        <p className="text-m mb-3">
+                        <p className="text-lg mb-3">
                             {currentDate.getFullYear()}
                         </p>
-                        <p className="text-3xl">{currentDate.getMonth() + 1}</p>
-                        <p className="text-m mt-3">
+                        <p className="text-5xl">{currentDate.getMonth() + 1}</p>
+                        <p className="text-lg mt-3">
                             {MONTH_NAMES[currentDate.getMonth()]}
                         </p>
                     </div>

@@ -69,13 +69,7 @@ const DonutChart = ({ stats }) => {
                     currentAngle = endAngle; // 다음 조각을 위해 각도 누적
 
                     return (
-                        <path
-                            key={stat.name}
-                            d={pathData}
-                            fill="white" // 요청대로 흰색 채우기
-                            stroke="black" // 검은색 테두리
-                            strokeWidth={1}
-                        />
+                        <path key={stat.name} d={pathData} fill={stat.color} />
                     );
                 })
             ) : (
